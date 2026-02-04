@@ -74,22 +74,30 @@ class DayWidget extends StatelessWidget {
         bottom: dayParam.dayBottomPadding,
       ),
       child: GestureDetector(
-        onTapUp: (details) => onSlotEvent(width, details.localPosition.dx,
-            details.localPosition.dy, true, false, false),
+        onTapUp: (details) => onSlotEvent(
+            width,
+            details.localPosition.dx,
+            details.localPosition.dy,
+            true,
+            false,
+            false,
+            false), // JNG | 04-Feb-2026 - Add onSlotLongTapEnd override
         onDoubleTapDown: (details) => onSlotEvent(
             width,
             details.localPosition.dx,
             details.localPosition.dy,
             false,
             true,
-            false),
+            false,
+            false), // JNG | 04-Feb-2026 - Add onSlotLongTapEnd override
         onLongPressStart: (details) => onSlotEvent(
             width,
             details.localPosition.dx,
             details.localPosition.dy,
             false,
             false,
-            true),
+            true,
+            false), // JNG | 04-Feb-2026 - Add onSlotLongTapEnd override
         onLongPressMoveUpdate: (details) {
           if (dayParam.slotSelectionParam.enableLongPressSlotSelection) {
             var slotSelection = controller.slotSelectionNotifier.value;
@@ -115,6 +123,15 @@ class DayWidget extends StatelessWidget {
             }
           }
         },
+        // JNG | 04-Feb-2026 - Add onSlotLongTapEnd override
+        onLongPressEnd: (details) => onSlotEvent(
+            width,
+            details.localPosition.dx,
+            details.localPosition.dy,
+            false,
+            false,
+            false,
+            !dayParam.slotSelectionParam.canDragSlotSelectionAfterShow),
         child: Stack(
           children: [
             // offSet all days painter
@@ -315,6 +332,8 @@ class DayWidget extends StatelessWidget {
     bool tap,
     bool doubleTap,
     bool longPress,
+    // JNG | 04-Feb-2026 - Add onSlotLongTapEnd override
+    bool longPressEnd,
   ) {
     var exactDate = getExactDateTime(dy);
     var roundDate = getRoundDateTime(dy);
@@ -323,21 +342,28 @@ class DayWidget extends StatelessWidget {
         ? dayParam.onSlotTap
         : doubleTap
             ? dayParam.onSlotDoubleTap
-            : dayParam.onSlotLongTap;
+            // JNG | 04-Feb-2026 - Add onSlotLongTapEnd override
+            : longPressEnd
+                ? dayParam.onSlotLongTapEnd
+                : dayParam.onSlotLongTap;
     eventFunction?.call(column, exactDate, roundDate);
 
     var slotSelectionParam = dayParam.slotSelectionParam;
 
     // reset slot selection
     if (controller.slotSelectionNotifier.value != null &&
-        slotSelectionParam.clearWhenBackgroundTap) {
+        slotSelectionParam.clearWhenBackgroundTap &&
+        // JNG | 04-Feb-2026 - Fix not being able to re-drag slot
+        !slotSelectionParam.canDragSlotSelectionAfterShow) {
       controller.slotSelectionNotifier.value = null;
       slotSelectionParam.onSlotSelectionChange?.call(null);
     }
     // init slot selection
     else if ((tap && slotSelectionParam.enableTapSlotSelection) ||
         (doubleTap && slotSelectionParam.enableDoubleTapSlotSelection) ||
-        (longPress && slotSelectionParam.enableLongPressSlotSelection)) {
+        (longPress && slotSelectionParam.enableLongPressSlotSelection) ||
+        // JNG | 04-Feb-2026 - Fix not being able to re-drag slot
+        (!longPressEnd && slotSelectionParam.canDragSlotSelectionAfterShow)) {
       int duration = slotSelectionParam.slotSelectionDefaultDurationInMinutes
               ?.call(column, roundDate) ??
           DayParam.defaultSlotSelectionDurationInMinutes;

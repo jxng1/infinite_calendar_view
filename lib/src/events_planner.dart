@@ -946,6 +946,8 @@ class DayParam {
     this.onSlotRoundAlwaysBefore = false,
     this.onSlotTap,
     this.onSlotLongTap,
+    // JNG | 04-Feb-2026 - Add onSlotLongTapEnd override
+    this.onSlotLongTapEnd,
     this.onSlotDoubleTap,
     this.onDayBuild,
     this.slotSelectionParam = const SlotSelectionParam(),
@@ -1003,6 +1005,12 @@ class DayParam {
     DateTime exactDateTime,
     DateTime roundDateTime,
   )? onSlotLongTap;
+
+  // JNG | 04-Feb-2026 - Add onSlotLongTapEnd override
+  /// event after long tap ends
+  final void Function(
+          int columnIndex, DateTime exactDateTime, DateTime roundDateTime)?
+      onSlotLongTapEnd;
 
   /// event when double tap on free slot on day
   final void Function(
