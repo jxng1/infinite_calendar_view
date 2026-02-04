@@ -361,9 +361,7 @@ class DayWidget extends StatelessWidget {
     // init slot selection
     else if ((tap && slotSelectionParam.enableTapSlotSelection) ||
         (doubleTap && slotSelectionParam.enableDoubleTapSlotSelection) ||
-        (longPress && slotSelectionParam.enableLongPressSlotSelection) ||
-        // JNG | 04-Feb-2026 - Fix not being able to re-drag slot
-        (!longPressEnd && slotSelectionParam.canDragSlotSelectionAfterShow)) {
+        (longPress && slotSelectionParam.enableLongPressSlotSelection)) {
       int duration = slotSelectionParam.slotSelectionDefaultDurationInMinutes
               ?.call(column, roundDate) ??
           DayParam.defaultSlotSelectionDurationInMinutes;
