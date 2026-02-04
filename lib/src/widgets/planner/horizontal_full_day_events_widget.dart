@@ -60,40 +60,43 @@ class HorizontalFullDayEventsWidget extends StatelessWidget {
                   ),
                 ),
           ),
-          Expanded(
-            child: SizedBox(
-              height: fullDayParam.fullDayEventsBarHeight,
-              child: InfiniteList(
-                  controller: dayHorizontalController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  direction: InfiniteListDirection.multi,
-                  negChildCount: maxPreviousDays,
-                  posChildCount: maxNextDays,
-                  builder: (context, index) {
-                    var day = getDayFromIndex(index);
-                    var isToday = DateUtils.isSameDay(day, DateTime.now());
-                    return InfiniteListItem(
-                      contentBuilder: (context) {
-                        return SizedBox(
-                          width: dayWidth,
-                          child: FullDayEventsWidget(
-                            controller: controller,
-                            isToday: isToday,
-                            day: day,
-                            todayColor: todayColor,
-                            fullDayParam: fullDayParam,
-                            columnsParam: columnsParam,
-                            dayWidth: dayWidth,
-                            daySeparationWidthPadding:
-                                daySeparationWidthPadding,
-                          ),
+          // JNG | 04-Feb-2026 - Override top level multi(full)-day bar
+          fullDayParam.fullDayRootBuilder
+                  ?.call(context, fullDayParam, dayWidth) ??
+              Expanded(
+                child: SizedBox(
+                  height: fullDayParam.fullDayEventsBarHeight,
+                  child: InfiniteList(
+                      controller: dayHorizontalController,
+                      physics: const NeverScrollableScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      direction: InfiniteListDirection.multi,
+                      negChildCount: maxPreviousDays,
+                      posChildCount: maxNextDays,
+                      builder: (context, index) {
+                        var day = getDayFromIndex(index);
+                        var isToday = DateUtils.isSameDay(day, DateTime.now());
+                        return InfiniteListItem(
+                          contentBuilder: (context) {
+                            return SizedBox(
+                              width: dayWidth,
+                              child: FullDayEventsWidget(
+                                controller: controller,
+                                isToday: isToday,
+                                day: day,
+                                todayColor: todayColor,
+                                fullDayParam: fullDayParam,
+                                columnsParam: columnsParam,
+                                dayWidth: dayWidth,
+                                daySeparationWidthPadding:
+                                    daySeparationWidthPadding,
+                              ),
+                            );
+                          },
                         );
-                      },
-                    );
-                  }),
-            ),
-          ),
+                      }),
+                ),
+              ),
         ],
       ),
     );

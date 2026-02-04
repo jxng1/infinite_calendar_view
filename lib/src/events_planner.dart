@@ -653,6 +653,8 @@ class FullDayParam {
     ),
     this.fullDayEventsBuilder,
     this.fullDayEventBuilder,
+    // JNG | 04-Feb-2026 - Override top level multi(full)-day bar
+    this.fullDayRootBuilder,
     this.fullDayBackgroundColor,
   });
 
@@ -682,6 +684,12 @@ class FullDayParam {
 
   /// full day event builder
   final Widget Function(Event event, double width)? fullDayEventBuilder;
+
+  // JNG | 04-Feb-2026 - Override top level multi(full)-day bar
+  /// full day root builder(above [InfiniteList])
+  final Widget Function(
+          BuildContext context, FullDayParam fullDayParam, double dayWidth)?
+      fullDayRootBuilder;
 
   /// color of background top bar
   final Color? fullDayBackgroundColor;
