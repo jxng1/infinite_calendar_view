@@ -1,3 +1,16 @@
+## 2.11.2
+
+- [documentation] readme update
+
+## 2.11.1
+
+- [documentation] Add pubspec screenshots
+- [documentation] Add pubspec topics
+
+## 2.11.0
+
+- [change] Remove sticky_infinite_list dependencies
+
 ## 2.10.2
 
 - [new] Support InteractiveSlot onLongPressEnd
